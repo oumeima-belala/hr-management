@@ -97,7 +97,7 @@ class EmployeeDetailView(RetrieveUpdateDestroyAPIView):
 
         serializer.is_valid(raise_exception=True)
 
-        employee = EmployeeService.update_employee(
+        employee = EmployeeService.update(
             employee,
             serializer.validated_data
         )
@@ -109,7 +109,7 @@ class EmployeeDetailView(RetrieveUpdateDestroyAPIView):
     def destroy(self, request, *args, **kwargs):
         employee = self.get_object()
 
-        EmployeeService.delete_employee(employee)
+        EmployeeService.soft_delete(employee)
 
         return Response(
             {
@@ -126,7 +126,7 @@ class RestoreEmployeeView(APIView):
 
     @employee_restore_docs()
     def patch(self, request, pk):
-        employee = EmployeeService.get_deleted_employee(pk)
+        employee = EmployeeService.get_deleted(pk)
 
         if not employee:
             return Response(
@@ -136,7 +136,7 @@ class RestoreEmployeeView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        employee = EmployeeService.restore_employee(
+        employee = EmployeeService.restore(
             employee
         )
 

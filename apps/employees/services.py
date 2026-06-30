@@ -2,8 +2,12 @@ from django.db import transaction
 from apps.users.models import User, UserRole
 from django.db.models import Count, Q
 from .models import Employee, Gender, FamilyStatus
+from core.services import BaseService
 
-class EmployeeService:
+class EmployeeService(BaseService):
+
+    model = Employee
+
     @staticmethod
     @transaction.atomic
     def create_employee(validated_data):
@@ -21,98 +25,6 @@ class EmployeeService:
             user=user,
             **validated_data
         )
-
-        return employee
-
-
-    @staticmethod
-    def list_employees():
-        """
-        Retourne tous les employés non supprimés.
-        """
-        return (
-            Employee.objects
-            .select_related("user")
-            .filter(is_deleted=False)
-        )
-
-
-    @staticmethod
-    def get_employee(employee_id):
-        """
-        Retourne un employé à partir de son identifiant.
-        """
-
-        return (
-            Employee.objects
-            .select_related("user")
-            .filter(
-                id=employee_id,
-                is_deleted=False
-            )
-            .first()
-        )
-
-
-    @staticmethod
-    @transaction.atomic
-    def update_employee(employee, validated_data):
-        role = validated_data.pop("role", None)
-        if role is not None:
-            employee.user.role = role
-            employee.user.save()
-
-        for field, value in validated_data.items():
-            setattr(employee, field, value)
-
-        employee.save()
-
-        return employee
-
-    @staticmethod
-    @transaction.atomic
-    def delete_employee(employee):
-
-        print("Avant :", employee.is_deleted)
-
-        employee.is_deleted = True
-        employee.user.is_active = False
-
-        employee.user.save()
-        employee.save()
-
-        employee.refresh_from_db()
-
-        print("Après :", employee.is_deleted)
-        print("User actif :", employee.user.is_active)
-
-        return employee
-
-
-    @staticmethod
-    def get_deleted_employee(employee_id):
-
-        return (
-            Employee.objects
-            .select_related("user")
-            .filter(
-                id=employee_id,
-                is_deleted=True
-            )
-            .first()
-        )
-
-
-    @staticmethod
-    @transaction.atomic
-    def restore_employee(employee):
-        employee.is_deleted = False
-
-        employee.user.is_active = True
-
-        employee.user.save()
-
-        employee.save()
 
         return employee
 

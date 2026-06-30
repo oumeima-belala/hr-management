@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from datetime import date
+from core.models import BaseModel
 
 class Gender(models.TextChoices):
     MALE = "MALE", "Male"
@@ -13,7 +14,7 @@ class FamilyStatus(models.TextChoices):
     WIDOWED = "WIDOWED", "Widowed"
 
 
-class Employee(models.Model):
+class Employee(BaseModel):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -41,9 +42,6 @@ class Employee(models.Model):
         blank=True,
         null=True
     )
-    is_deleted = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
     hired_at = models.DateTimeField(null=True)
 
     @property

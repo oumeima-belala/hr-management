@@ -2,7 +2,7 @@ from core.permissions import BaseRolePermission
 from apps.users.models import UserRole
 
 
-class EmployeePermission(BaseRolePermission):
+class DepartmentPermission(BaseRolePermission):
 
     allowed_roles = {
 
@@ -26,12 +26,3 @@ class EmployeePermission(BaseRolePermission):
 
         "DELETE": [],
     }
-
-    def has_custom_permission(self, request, view):
-        if (
-                view.__class__.__name__ == "RestoreEmployeeView"
-                and request.user.role == UserRole.ADMIN
-        ):
-            return True
-
-        return False

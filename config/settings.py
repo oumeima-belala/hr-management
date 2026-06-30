@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "apps.authentication",
     "apps.users",
     "apps.employees",
+    "apps.departments",
 ]
 
 REST_FRAMEWORK = {
