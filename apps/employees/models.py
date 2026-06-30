@@ -12,6 +12,7 @@ class FamilyStatus(models.TextChoices):
     DIVORCED = "DIVORCED", "Divorced"
     WIDOWED = "WIDOWED", "Widowed"
 
+
 class Employee(models.Model):
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
@@ -36,17 +37,18 @@ class Employee(models.Model):
     )
     birth_date = models.DateField()
     photo = models.ImageField(
-        upload_to="employees/",
+        upload_to="employees/photos/",
         blank=True,
         null=True
     )
+    is_deleted = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    hired_at = models.DateTimeField(null=True)
 
     @property
     def age(self):
         today = date.today()
-
         return (
                 today.year
                 - self.birth_date.year
@@ -57,6 +59,15 @@ class Employee(models.Model):
                 )
         )
 
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+
+    class Meta:
+        ordering = ["last_name", "first_name"]
+        verbose_name = "Employee"
+        verbose_name_plural = "Employees"
 
